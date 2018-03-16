@@ -1,0 +1,10 @@
+.DS_Store
+reports
+dist
+jest
+node_modules
+*.log
+.idea
+.sass-cache
+.ghg.lock
+.vscode
