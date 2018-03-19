@@ -1,28 +1,34 @@
-const express = require('express');
+const express = require("express");
+let app = express();
+let server = require("http").createServer(app);
+let io = require("socket.io")(server);
 
 const config = {
   server: {
-    port: 3100
+    port: 4400
   }
-}
+};
 
-let app = express();
+app.use(express.static(__dirname + "/client"));
 
-const device = {
-  platform: {
-    connected: false,
-    status: 'idle',
-  },
-  randomtale: {
-    status: 'idle', // 'playing', 'sending', 'receiving'
-    playlist: []
-  }
-}
-
-app.get('/status', function(req, res) {
-  res.json(device);
-})
+app.get("/", function(req, res, next) {
+  res.sendFile(__dirname + "/index.html");
+});
 
 console.log(`Server is up and running at port ${config.server.port}!`);
 
-app.listen(config.server.port);
+io.on("connection", function(client) {
+  console.log("Client connected...");
+
+  client.on("join", function(data) {
+    console.log(data);
+  });
+
+  client.on("controls", function(data) {
+    console.log(data);
+    client.emit("broad", data);
+    client.broadcast.emit("broad", data);
+  });
+});
+
+server.listen(config.server.port);
