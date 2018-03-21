@@ -42,12 +42,17 @@
   socket.on('connect', function (data) {
     visibleLog('Websocket connection established');
     socket.emit('join', 'Connected from client web app...');
+
+    socket.on('notify', function (data) {
+      visibleLog(data);
+    });
+
+    socket.on('broad', function (data) {
+      console.log(data);
+      visibleLog(data);
+    });
   });
 
-  socket.on('broad', function (data) {
-    console.log(data);
-    visibleLog(data);
-  });
 
   buttonStart.onclick = function () {
     emitControl('start');
