@@ -32,7 +32,7 @@
 </html>
 
 <script>
-  var socket = io.connect();
+  var socket = io.connect('http://127.0.0.1:5000');
 
   var buttonStart = document.getElementById('controls-start');
   var buttonPause = document.getElementById('controls-pause');
@@ -40,14 +40,13 @@
   var consoleArea = document.getElementById('console');
 
   socket.on('connect', function (data) {
+    visibleLog('Websocket connection established');
     socket.emit('join', 'Connected from client web app...');
   });
 
   socket.on('broad', function (data) {
-    var currentdate = new Date();
-    var timestamp = currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
     console.log(data);
-    consoleArea.value += timestamp + " > " + data + '\n';
+    visibleLog(data);
   });
 
   buttonStart.onclick = function () {
@@ -62,5 +61,11 @@
 
   function emitControl(message) {
     socket.emit('controls', message);
+  }
+
+  function visibleLog(msg) {
+    var currentdate = new Date();
+    var timestamp = currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
+    consoleArea.value += timestamp + " > " + msg + '\n';
   }
 </script>
