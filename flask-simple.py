@@ -33,7 +33,7 @@ def on_controls(data):
         print("Starting playback")
         file_to_play = file_loader.random_file(read_folder)
         emit("notify", "Loaded: " + file_to_play)
-        media_player.player_load(file_to_play, 0.7)
+        media_player.player_load(file_to_play, 0.5)
         media_player.player_start()
         emit_player_status(media_player.status())
 
