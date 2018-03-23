@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>RandomTale API Client</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+    crossorigin="anonymous">
+  <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ"
+    crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+  <div class="container">
+    <h1>RandomTale API Client</h1>
+    <div class="form-group">
+      <input type="text" class="form-control" id="playing" placeholder="No media playing&hellip;" />
+    </div>
+    <div class="text-center">
+      <div class="btn-group">
+        <button class="btn btn-lg btn-primary" id="controls-start">
+          <i class="fas fa-play"></i> Start</button>
+        <button class="btn btn-lg btn-secondary" id="controls-pause">
+          <i class="fas fa-pause"></i> Pause</button>
+        <button class="btn btn-lg btn-secondary" id="controls-stop">
+          <i class="fas fa-stop"></i> Stop</button>
+      </div>
+    </div>
+    <br/>
+    <div class="form-group">
+      <textarea class="form-control" id="console" rows="5"></textarea>
+    </div>
+    <div class="text-center">
+      <button class="btn btn-danger" id="controls-quit">
+        <i class="fas fa-power-off"></i> Shutdown</button>
+    </div>
+  </div>
+  </div>
+</body>
+
+</html>
+
+<script>
+  var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+  var nowPlaying = document.getElementById('playing');
+  var buttonStart = document.getElementById('controls-start');
+  var buttonPause = document.getElementById('controls-pause');
+  var buttonStop = document.getElementById('controls-stop');
+
+  var buttonQuit = document.getElementById('controls-quit');
+
+  var consoleArea = document.getElementById('console');
+
+  socket.on('connect', function (data) {
+    visibleLog('Websocket connection established');
+    socket.emit('join', 'Connected from client web app...');
+
+    socket.on('notify', function (data) {
+      visibleLog(data);
+    });
+
+    socket.on('broad', function (data) {
+      console.log(data);
+      visibleLog(data);
+    });
+
+    socket.on('status', function (data) {
+      const jsonResponse = JSON.parse(data);
+      const player = jsonResponse.player;
+
+      nowPlaying.value = jsonResponse.file_loaded;
+
+      buttonStop.removeAttribute('disabled');
+      buttonStart.removeAttribute('disabled');
+
+      if (player.is_started) {
+        buttonStart.setAttribute('disabled', true);
+      }
+
+      if (player.is_stopped) {
+        buttonStop.setAttribute('disabled', true);
+      }
+
+    });
+  });
+
+
+  buttonStart.onclick = function () {
+    emitControl('start');
+  };
+  buttonPause.onclick = function () {
+    emitControl('pause');
+  };
+  buttonStop.onclick = function () {
+    emitControl('stop');
+  };
+  buttonQuit.onclick = function () {
+    let confirmation = confirm('This will shutdown the device.\nAre you sure?');
+    if (confirmation) emitControl('shutdown');
+  };
+
+  function emitControl(message) {
+    socket.emit('controls', message);
+  }
+
+  function visibleLog(msg) {
+    var currentdate = new Date();
+    var timestamp = currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
+    consoleArea.value = timestamp + " > " + msg + '\n' + consoleArea.value;
+  }
+</script>

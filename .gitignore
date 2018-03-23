@@ -2,6 +2,7 @@
 reports
 dist
 jest
+input
 node_modules
 *.log
 .idea
