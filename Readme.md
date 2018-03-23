@@ -1,23 +1,23 @@
-# Project Title
+# RandomTale API Server & Webclient
 
-This builds a Flask API to play a random mp3 in a designated folder and can be controlled via a webclient. This is designed to run on a Raspberry Pi with audio support, but can be run on any device with Python 2.7.
+This builds a Flask API to play a random media file in a designated folder and can be controlled via a webclient. This is designed to run on a Raspberry Pi with audio support, but can be run on any device with Python 2.7.
 
-
-- Make sure you have Python 2.7 installed (not tested on Python 3.
-- The webclient is vanilla and should work in any major recent browser.
+* Make sure you have Python 2.7 installed (not tested on Python 3.
+* The webclient is vanilla JS and should work in any major recent browser. (An internet connection is required for styling purposes)
 
 ## Getting Started
 
-- Clone the repo to your local machine
-- Install the dependencies for the Python scripts
-- Make sure there's an /input/ folder with *.mp3s on the root level
-  - The script just tries to play a random file from the folder, so only place media files over here!
+* Clone the repo to your local machine
+* Install the dependencies for the Python scripts
+* Make sure there's an /input/ folder with \*.mp3s on the root level
+  * The script just tries to play a random file from the folder, so only place media files over here!
 
 ```
 pip install -r requirements.txt
 ```
 
 Then run the script:
+
 ```
 python flask-simply.py
 ```

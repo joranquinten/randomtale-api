@@ -1,23 +1,26 @@
 import json
-# import call
+from subprocess import call
 from flask import Flask, render_template, jsonify
 from flask_socketio import SocketIO, join_room, emit
 
 import file_loader
 from player import Mediaplayer
 
+# Set the folder which contains the media
 read_folder = "./input/"
 
-# initialize Flask
+# Initialize
 app = Flask(__name__)
 socketio = SocketIO(app)
-
 media_player = Mediaplayer()
+
 
 @app.route('/')
 def index():
     """Serve the index HTML"""
     return render_template('index.html')
+
+# Receive controls from the socket and act accordingly
 
 
 @socketio.on('controls')
@@ -47,8 +50,11 @@ def on_controls(data):
         emit_player_status(media_player.status())
 
     if data == "shutdown":
-        print("sudo halt")
-        # call("sudo halt", shell=True)
+        print("sudo shutdown --poweroff")
+        call("sudo shutdown --poweroff", shell=True)
+
+# Return what the media player is doing over the socket
+
 
 def emit_player_status(status):
 
@@ -57,12 +63,14 @@ def emit_player_status(status):
             "is_paused": status.player_is_paused,
             "is_started": status.player_is_started,
             "is_stopped": status.player_is_stopped
-            },
+        },
         "file_loaded": status.file_loaded
-        })
+    })
 
     emit("status", status_json)
 
 
+# Execute the script
 if __name__ == '__main__':
+    """ Run the socket server on the published IP address """
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)
