@@ -1,5 +1,5 @@
 import json
-import call
+# import call
 from flask import Flask, render_template, jsonify
 from flask_socketio import SocketIO, join_room, emit
 
@@ -48,7 +48,7 @@ def on_controls(data):
 
     if data == "shutdown":
         print("sudo halt")
-        call("sudo halt", shell=True)
+        # call("sudo halt", shell=True)
 
 def emit_player_status(status):
 
@@ -65,4 +65,4 @@ def emit_player_status(status):
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
