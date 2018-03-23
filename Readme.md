@@ -19,12 +19,10 @@ pip install -r requirements.txt
 Then run the script:
 
 ```
-python flask-simply.py
+python flask-simple.py
 ```
 
-The application starts in debug mode. You should be able to open the webclient on the localhost address with the predefined port number: http://127.0.0.1:5000. The webclient offers controls to play random files from the input folder.
-
-_Bear in mind that I've *disabled* the shutdown command on the repo!_
+The application starts in debug mode. You should be able to open the webclient on it's netwerk address with the predefined port number: http://0.0.0.0:5000. The webclient offers controls to play random files from the input folder.
 
 ## License
 
