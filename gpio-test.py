@@ -22,7 +22,7 @@ read_folder = "./input/"
 media_player = Mediaplayer()
 
 # Set the connected pin function
-PIN = 4
+PIN = 10
 DEBUG = False
 
 # Read command line args
