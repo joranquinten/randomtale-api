@@ -11,33 +11,34 @@
 
 import RPi.GPIO as GPIO
 import time
-import sys, getopt
+import sys
+import getopt
 
 # Set the connected pin function
 PIN = 4
 DEBUG = False
 
 # Read command line args
-myopts, args = getopt.getopt(sys.argv[1:],"p:d:")
+myopts, args = getopt.getopt(sys.argv[1:], "p:d:")
 for option, arg in myopts:
     if option == '-p':
-        PIN=arg
-        print("GPIO Pin set to "+ PIN)
+        PIN = arg
+        print("GPIO Pin set to " + PIN)
     elif option == '-d':
-        DEBUG=arg
+        DEBUG = arg
         print("Debugging mode on")
     else:
         print("Usage: %s -p gpiopinnumber -d debugmode" % sys.argv[0])
 
 GPIO.setmode(GPIO.BCM)   # Set up to use GPIO numbering
-GPIO.setup(PIN, GPIO.IN) # We are reading INput, not OUTput
+GPIO.setup(PIN, GPIO.IN)  # We are reading INput, not OUTput
 
 
 if DEBUG:
-  print(GPIO.RPI_INFO)
+    print(GPIO.RPI_INFO)
 
 while True:
-  if GPIO.input(PIN):
-    print("Sensitivity threshold met")
+    if GPIO.input(PIN) == False:
+        print("Sensitivity threshold met")
 
-  time.sleep(1)
+    time.sleep(1)
