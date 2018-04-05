@@ -11,13 +11,27 @@
 
 import RPi.GPIO as GPIO
 import time
+import sys, getopt
 
 # Set the connected pin function
 PIN = 4
 DEBUG = False
 
+# Read command line args
+myopts, args = getopt.getopt(sys.argv[1:],"p:d:")
+for option, arg in myopts:
+    if option == '-p':
+        PIN=arg
+        print("GPIO Pin set to "+ PIN)
+    elif option == '-d':
+        DEBUG=arg
+        print("Debugging mode on")
+    else:
+        print("Usage: %s -p gpiopinnumber -d debugmode" % sys.argv[0])
+
 GPIO.setmode(GPIO.BCM)   # Set up to use GPIO numbering
 GPIO.setup(PIN, GPIO.IN) # We are reading INput, not OUTput
+
 
 if DEBUG:
   print(GPIO.RPI_INFO)
