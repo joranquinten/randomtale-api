@@ -37,8 +37,23 @@ GPIO.setup(PIN, GPIO.IN)  # We are reading INput, not OUTput
 if DEBUG:
     print(GPIO.RPI_INFO)
 
-while True:
-    if GPIO.input(PIN) == False:
-        print("Sensitivity threshold met")
 
-    time.sleep(1)
+def waitForLight():
+    while True:
+        if GPIO.input(PIN) == False:
+            print("Light input detected")
+            waitForDarkness()
+            return
+        time.sleep(1)
+
+
+def waitForDarkness():
+    while True:
+        if GPIO.input(PIN):
+            print("Darkness")
+            waitForLight()
+            return
+        time.sleep(1)
+
+
+waitForLight()
