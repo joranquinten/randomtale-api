@@ -14,6 +14,13 @@ import time
 import sys
 import getopt
 
+import file_loader
+from player import Mediaplayer
+
+# Set the folder which contains the media
+read_folder = "./input/"
+media_player = Mediaplayer()
+
 # Set the connected pin function
 PIN = 4
 DEBUG = False
@@ -38,10 +45,24 @@ if DEBUG:
     print(GPIO.RPI_INFO)
 
 
+def play_start():
+    print("Starting playback")
+    file_to_play = file_loader.random_file(read_folder)
+    print("Loaded: " + file_to_play)
+    media_player.player_load(file_to_play, 0.5)
+    media_player.player_start()
+
+
+def play_stop():
+    print("Stopping playback")
+    media_player.player_stop()
+
+
 def waitForLight():
     while True:
         if GPIO.input(PIN) == False:
             print("Light input detected")
+            play_start()
             waitForDarkness()
             return
         time.sleep(1)
@@ -51,6 +72,7 @@ def waitForDarkness():
     while True:
         if GPIO.input(PIN):
             print("Darkness")
+            play_stop()
             waitForLight()
             return
         time.sleep(1)
