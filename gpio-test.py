@@ -5,9 +5,9 @@
 # https://sourceforge.net/p/raspberry-gpio-python/wiki/
 #
 # Sensor      RasPi Pin   RasPi function
-# GND         6           GND
-# VCC         1           3.3v
-# SIGNAL D0   7           GPIO 4
+# GND         20           GND
+# VCC         17           3.3v
+# SIGNAL D0   19           GPIO 10
 
 import RPi.GPIO as GPIO
 import time
