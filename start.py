@@ -1,76 +1,83 @@
-import json
-from subprocess import call
-from flask import Flask, render_template, jsonify
-from flask_socketio import SocketIO, join_room, emit
+# Assumes default wiring scheme
+#
+# https://raspberrytips.nl/lichtsensor-aansluiten-raspberry-pi/
+# https://pinout.xyz/
+# https://sourceforge.net/p/raspberry-gpio-python/wiki/
+#
+# Sensor      RasPi Pin   RasPi function
+# GND         20           GND
+# VCC         17           3.3v
+# SIGNAL D0   19           GPIO 10
+
+import RPi.GPIO as GPIO
+import time
+import sys
+import getopt
 
 import file_loader
 from player import Mediaplayer
 
 # Set the folder which contains the media
 read_folder = "./input/"
-
-# Initialize
-app = Flask(__name__)
-socketio = SocketIO(app)
 media_player = Mediaplayer()
 
+# Set the connected pin function
+PIN = 10
+DEBUG = False
 
-@app.route('/')
-def index():
-    """Serve the index HTML"""
-    return render_template('index.html')
+# Read command line args
+myopts, args = getopt.getopt(sys.argv[1:], "p:d:")
+for option, arg in myopts:
+    if option == '-p':
+        PIN = arg
+        print("GPIO Pin set to " + PIN)
+    elif option == '-d':
+        DEBUG = arg
+        print("Debugging mode on")
+    else:
+        print("Usage: %s -p gpiopinnumber -d debugmode" % sys.argv[0])
 
-# Receive controls from the socket and act accordingly
-
-
-@socketio.on('controls')
-def on_controls(data):
-    """Instance of controls"""
-    print("Controls received:" + data)
-
-    if data == "start":
-        emit("notify", "Starting playback")
-        print("Starting playback")
-        file_to_play = file_loader.random_file(read_folder)
-        emit("notify", "Loaded: " + file_to_play)
-        media_player.player_load(file_to_play, 0.5)
-        media_player.player_start()
-        emit_player_status(media_player.status())
-
-    if data == "stop":
-        emit("notify", "Stopping playback")
-        print("Stopping playback")
-        media_player.player_stop()
-        emit_player_status(media_player.status())
-
-    if data == "pause":
-        emit("notify", "Toggling pause")
-        print("Toggling pause")
-        media_player.player_pause()
-        emit_player_status(media_player.status())
-
-    if data == "shutdown":
-        print("sudo shutdown --poweroff")
-        call("sudo shutdown --poweroff", shell=True)
-
-# Return what the media player is doing over the socket
+GPIO.setmode(GPIO.BCM)   # Set up to use GPIO numbering
+GPIO.setup(PIN, GPIO.IN)  # We are reading INput, not OUTput
 
 
-def emit_player_status(status):
-
-    status_json = json.dumps({
-        "player": {
-            "is_paused": status.player_is_paused,
-            "is_started": status.player_is_started,
-            "is_stopped": status.player_is_stopped
-        },
-        "file_loaded": status.file_loaded
-    })
-
-    emit("status", status_json)
+if DEBUG:
+    print(GPIO.RPI_INFO)
 
 
-# Execute the script
-if __name__ == '__main__':
-    """ Run the socket server on the published IP address """
-    socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+def play_start():
+    print("Starting playback")
+    file_to_play = file_loader.random_file(read_folder)
+    print("Loaded: " + file_to_play)
+    media_player.player_load(file_to_play, 0.5)
+    media_player.player_start()
+
+
+def play_stop():
+    print("Stopping playback")
+    media_player.player_stop()
+
+
+def waitForLight():
+    print("Waiting for light to hit the sensor")
+    while True:
+        if GPIO.input(PIN) == False:
+            print("Light input detected")
+            play_start()
+            waitForDarkness()
+            return
+        time.sleep(1)
+
+
+def waitForDarkness():
+    print("Waiting for low light threshold")
+    while True:
+        if GPIO.input(PIN):
+            print("Darkness")
+            play_stop()
+            waitForLight()
+            return
+        time.sleep(1)
+
+
+waitForLight()
