@@ -13,6 +13,7 @@ import RPi.GPIO as GPIO
 import time
 import sys
 import getopt
+from subprocess import call
 
 import file_loader
 from player import Mediaplayer
@@ -41,7 +42,7 @@ for option, arg in myopts:
 GPIO.setmode(GPIO.BCM)   # Set up to use GPIO numbering
 GPIO.setup(LIGHT_PIN, GPIO.IN)  # We are reading INput, not OUTput
 
-GPIO.setup(BTN_NEXT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP))  # set up button listener
+GPIO.setup(BTN_NEXT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # set up button listener
 
 if DEBUG:
     print(GPIO.RPI_INFO)
@@ -69,8 +70,8 @@ while True:
         print("Darkness")
         play_stop()
 
-    if GPIO.input(BTN_NEXT_PIN):
-        print("Skip")
-        play_start()
+    if GPIO.input(BTN_NEXT_PIN) == False:
+        print("Shutting down now")
+        call("sudo nohup shutdown -h now", shell=True)
 
-    time.sleep(1)
+    time.sleep(0.3)
