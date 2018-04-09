@@ -22,15 +22,16 @@ read_folder = "./input/"
 media_player = Mediaplayer()
 
 # Set the connected pin function
-PIN = 10
+LIGHT_PIN = 10
+BTN_NEXT_PIN = 21
 DEBUG = False
 
 # Read command line args
 myopts, args = getopt.getopt(sys.argv[1:], "p:d:")
 for option, arg in myopts:
     if option == '-p':
-        PIN = arg
-        print("GPIO Pin set to " + PIN)
+        LIGHT_PIN = arg
+        print("GPIO Pin set to " + LIGHT_PIN)
     elif option == '-d':
         DEBUG = arg
         print("Debugging mode on")
@@ -38,7 +39,7 @@ for option, arg in myopts:
         print("Usage: %s -p gpiopinnumber -d debugmode" % sys.argv[0])
 
 GPIO.setmode(GPIO.BCM)   # Set up to use GPIO numbering
-GPIO.setup(PIN, GPIO.IN)  # We are reading INput, not OUTput
+GPIO.setup(LIGHT_PIN, GPIO.IN)  # We are reading INput, not OUTput
 
 
 if DEBUG:
@@ -58,26 +59,17 @@ def play_stop():
     media_player.player_stop()
 
 
-def waitForLight():
-    print("Waiting for light to hit the sensor")
-    while True:
-        if GPIO.input(PIN) == False:
-            print("Light input detected")
-            play_start()
-            waitForDarkness()
-            return
-        time.sleep(1)
+while True:
+    if GPIO.input(LIGHT_PIN) == False:
+        print("Light input detected")
+        play_start()
 
+    if GPIO.input(LIGHT_PIN):
+        print("Darkness")
+        play_stop()
 
-def waitForDarkness():
-    print("Waiting for low light threshold")
-    while True:
-        if GPIO.input(PIN):
-            print("Darkness")
-            play_stop()
-            waitForLight()
-            return
-        time.sleep(1)
+    if GPIO.input(BTN_NEXT_PIN):
+        print("Skip")
+        play_start()
 
-
-waitForLight()
+    time.sleep(1)
