@@ -41,6 +41,7 @@ for option, arg in myopts:
 GPIO.setmode(GPIO.BCM)   # Set up to use GPIO numbering
 GPIO.setup(LIGHT_PIN, GPIO.IN)  # We are reading INput, not OUTput
 
+GPIO.setup(BTN_NEXT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP))  # set up button listener
 
 if DEBUG:
     print(GPIO.RPI_INFO)
@@ -48,7 +49,7 @@ if DEBUG:
 
 def play_start():
     print("Starting playback")
-    file_to_play = file_loader.random_file(read_folder)
+    file_to_play=file_loader.random_file(read_folder)
     print("Loaded: " + file_to_play)
     media_player.player_load(file_to_play, 0.5)
     media_player.player_start()
