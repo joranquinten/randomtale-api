@@ -17,7 +17,7 @@ Flask-SocketIO==2.9.6
 future==0.15.2
 futures==3.2.0
 geographiclib==1.46.3
-geopy==1.11.0
+geopy==1.13.0
 gevent==1.2.2
 gpsoauth==0.3.0
 greenlet==0.4.13
