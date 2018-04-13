@@ -10,6 +10,8 @@
 # SIGNAL D0   19           GPIO 10
 
 import RPi.GPIO as GPIO
+from gpiozero import LightSensor
+from signal import pause
 import time
 import sys
 import getopt
@@ -40,9 +42,10 @@ for option, arg in myopts:
         print("Usage: %s -p gpiopinnumber -d debugmode" % sys.argv[0])
 
 GPIO.setmode(GPIO.BCM)   # Set up to use GPIO numbering
-GPIO.setup(LIGHT_PIN, GPIO.IN)  # We are reading INput, not OUTput
+sensor = LightSensor(18)
 
-GPIO.setup(BTN_NEXT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # set up button listener
+# set up button listener
+GPIO.setup(BTN_NEXT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 if DEBUG:
     print(GPIO.RPI_INFO)
@@ -50,28 +53,24 @@ if DEBUG:
 
 def play_start():
     print("Starting playback")
-    file_to_play=file_loader.random_file(read_folder)
+    file_to_play = file_loader.random_file(read_folder)
     print("Loaded: " + file_to_play)
     media_player.player_load(file_to_play, 0.5)
     media_player.player_start()
+    return
 
 
 def play_stop():
     print("Stopping playback")
     media_player.player_stop()
+    return
 
 
-while True:
-    if GPIO.input(LIGHT_PIN) == False:
-        print("Light input detected")
-        play_start()
+sensor.when_dark = play_start()
+sensor.when_light = play_stop()
 
-    if GPIO.input(LIGHT_PIN):
-        print("Darkness")
-        play_stop()
+if GPIO.input(BTN_NEXT_PIN) == False:
+    print("Shutting down now")
+    call("sudo nohup shutdown -h now", shell=True)
 
-    if GPIO.input(BTN_NEXT_PIN) == False:
-        print("Shutting down now")
-        call("sudo nohup shutdown -h now", shell=True)
-
-    time.sleep(0.3)
+pause()
