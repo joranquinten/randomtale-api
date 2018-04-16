@@ -100,7 +100,7 @@ def bootup():
     file_to_play = "fx/chime.mp3"
     media_player.player_load(file_to_play, 0.5)
     media_player.player_start()
-    time.sleep(2)
+    time.sleep(4)
     waitForLight()
     return
 
