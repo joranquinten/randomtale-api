@@ -54,12 +54,12 @@ def play_start():
     print("Loaded: " + file_to_play)
     media_player.player_load(file_to_play, 1)
     media_player.player_start()
-    IS_PLAYING = True
+
 
 def play_stop():
     print("Stopping playback")
     media_player.player_stop()
-    IS_PLAYING = False
+
 
 def pushButton():
     if GPIO.input(BTN_NEXT_PIN) == False:
@@ -67,11 +67,12 @@ def pushButton():
         call("sudo nohup shutdown -h now", shell=True)
     return
 
+
 def waitForLight():
     print("Waiting for light to hit the sensor")
     while True:
 
-	pushButton()
+        pushButton()
 
         if GPIO.input(PIN) == False:
             print("Light input detected")
@@ -85,7 +86,7 @@ def waitForDarkness():
     print("Waiting for low light threshold")
     while True:
 
-	pushButton()
+        pushButton()
 
         if GPIO.input(PIN):
             print("Darkness")
@@ -94,4 +95,14 @@ def waitForDarkness():
             return
         time.sleep(1)
 
-waitForLight()
+
+def bootup():
+    file_to_play = "fx/chime.mp3"
+    media_player.player_load(file_to_play, 0.5)
+    media_player.player_start()
+    time.sleep(2)
+    waitForLight()
+    return
+
+
+bootup()
