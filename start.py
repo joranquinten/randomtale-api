@@ -25,7 +25,6 @@ media_player = Mediaplayer()
 PIN = 10
 BTN_NEXT_PIN = 16
 DEBUG = False
-IS_PLAYING = False
 
 # Read command line args
 myopts, args = getopt.getopt(sys.argv[1:], "p:d:")
