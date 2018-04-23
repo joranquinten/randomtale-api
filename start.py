@@ -1,19 +1,6 @@
-# Assumes default wiring scheme
-#
-# https://raspberrytips.nl/lichtsensor-aansluiten-raspberry-pi/
-# https://pinout.xyz/
-# https://sourceforge.net/p/raspberry-gpio-python/wiki/
-#
-# Sensor      RasPi Pin   RasPi function
-# GND         20           GND
-# VCC         17           3.3v
-# SIGNAL D0   19           GPIO 10
-
 import RPi.GPIO as GPIO
 import time
 import subprocess
-import sys
-import getopt
 
 import file_loader
 from player import Mediaplayer
@@ -24,30 +11,15 @@ media_player = Mediaplayer()
 
 # Set the connected pin function
 PIN = 10
-BTN_NEXT_PIN = 16
-DEBUG = False
-
-# Read command line args
-myopts, args = getopt.getopt(sys.argv[1:], "p:d:")
-for option, arg in myopts:
-    if option == '-p':
-        PIN = arg
-        print("GPIO Pin set to " + PIN)
-    elif option == '-d':
-        DEBUG = arg
-        print("Debugging mode on")
-    else:
-        print("Usage: %s -p gpiopinnumber -d debugmode" % sys.argv[0])
+BTN_OFF_PIN = 16
 
 GPIO.setmode(GPIO.BCM)   # Set up to use GPIO numbering
+
+# set up sensor listener
 GPIO.setup(PIN, GPIO.IN)  # We are reading INput, not OUTput
 
 # set up button listener
-GPIO.setup(BTN_NEXT_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-if DEBUG:
-    print(GPIO.RPI_INFO)
-
+GPIO.setup(BTN_OFF_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 def play_start():
     print("Starting playback")
@@ -63,7 +35,7 @@ def play_stop():
 
 
 def pushButton():
-    if GPIO.input(BTN_NEXT_PIN) == False:
+    if GPIO.input(BTN_OFF_PIN) == False:
         print("Shutting down now")
         subprocess.call(['shutdown', '-h', 'now'], shell=False)
     return
@@ -101,7 +73,7 @@ def bootup():
     file_to_play = "fx/chime.mp3"
     media_player.player_load(file_to_play, 0.5)
     media_player.player_start()
-    time.sleep(4)
+    time.sleep(4) # Wait for the sound to finish playing
     waitForLight()
     return
 
