@@ -1,2 +1,2 @@
 cd /home/pi/Projects/randomtale-api
-sudo python flask-simple.py
+sudo python start.py
