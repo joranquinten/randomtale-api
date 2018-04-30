@@ -11,6 +11,7 @@
 
 import RPi.GPIO as GPIO
 import time
+import subprocess
 import sys
 import getopt
 
@@ -64,7 +65,7 @@ def play_stop():
 def pushButton():
     if GPIO.input(BTN_NEXT_PIN) == False:
         print("Shutting down now")
-        call("sudo nohup shutdown -h now", shell=True)
+        subprocess.call(['shutdown', '-h', 'now'], shell=False)
     return
 
 
