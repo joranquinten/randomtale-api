@@ -1,2 +1,1 @@
-cd /home/pi/Projects/randomtale-api
-sudo python start.py
+randomtale=$(find . -type d -name randomtale-api); cd $randomtale; python start.py
