@@ -13,13 +13,16 @@ media_player = Mediaplayer()
 PIN = 10
 BTN_OFF_PIN = 16
 
-GPIO.setmode(GPIO.BCM)   # Set up to use GPIO numbering
+# Set up to use GPIO numbering
+GPIO.setmode(GPIO.BCM)
 
 # set up sensor listener
-GPIO.setup(PIN, GPIO.IN)  # We are reading INput, not OUTput
+# We are reading INput, not OUTput
+GPIO.setup(PIN, GPIO.IN)
 
 # set up button listener
 GPIO.setup(BTN_OFF_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
 
 def play_start():
     print("Starting playback")
@@ -35,7 +38,7 @@ def play_stop():
 
 
 def pushButton():
-    if GPIO.input(BTN_OFF_PIN) == False:
+    if not GPIO.input(BTN_OFF_PIN):
         print("Shutting down now")
         subprocess.call(['shutdown', '-h', 'now'], shell=False)
     return
@@ -47,7 +50,7 @@ def waitForLight():
 
         pushButton()
 
-        if GPIO.input(PIN) == False:
+        if not GPIO.input(PIN):
             print("Light input detected")
             play_start()
             waitForDarkness()
@@ -73,7 +76,7 @@ def bootup():
     file_to_play = "fx/chime.mp3"
     media_player.player_load(file_to_play, 0.5)
     media_player.player_start()
-    time.sleep(4) # Wait for the sound to finish playing
+    time.sleep(4)  # Wait for the sound to finish playing
     waitForLight()
     return
 

@@ -9,3 +9,5 @@ node_modules
 .sass-cache
 .ghg.lock
 .vscode
+__pycache__/
+venv/
