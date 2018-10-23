@@ -1,15 +1,3 @@
-.DS_Store
-reports
-dist
-jest
-input
-node_modules
-*.log
-.idea
-.sass-cache
-.ghg.lock
-.vscode
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -114,3 +102,4 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
